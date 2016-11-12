@@ -17,6 +17,8 @@ int num_e; //number of edges
 
 int max_g; //global max edge length (run maxEdgeIndex() to set max_g)
 
+vertex *firstPos_v; //vertex at position 1
+
 char *testfile = "testfile";
 FILE *file;
 
@@ -31,12 +33,16 @@ int main() {
 	printGraph();
 	//printf("Maximum edge index: %d\n", maxEdgeIndex());
 	maxEdgeIndex(); //set the global max_g
-	int maxIndex = maxEdgeIndexFrom(0);
-	printf("DEBUG: maxIndex: %d\n", maxIndex);
-	printf("DEBUG: max_g: %d\n", max_g);
-	while((maxIndex = maxEdgeIndexFrom(maxIndex)) != -1) {
+	//int maxIndex = maxEdgeIndexFrom(0);
+	//printf("DEBUG: maxIndex: %d\n", maxIndex);
+	//printf("DEBUG: max_g: %d\n", max_g);
+	/*while((maxIndex = maxEdgeIndexFrom(maxIndex)) != -1) {
 		printf("Next maximum edge index: %d\n", maxIndex);
-	}
+	}*/
+//	improveGraphStep(); 
+	printf("Swapping vertices at positions 1 and 5\n");
+	swapVertices(vertices[1 - 1], vertices[5 - 1]);
+	printGraph();
 
 	fclose(file);
 }
@@ -62,7 +68,14 @@ void readGraph(FILE *file) {
 		vertices[i] = malloc(sizeof(vertex));
 		vertices[i]->id = i + 1;
 		vertices[i]->pos = i + 1;
+		if(i > 0) vertices[i]->prevPos_v = vertices[i - 1];
 	}
+	firstPos_v = vertices[0];
+	firstPos_v->prevPos_v = NULL;
+	for(i = 0; i < num_v - 1; i++) {
+		vertices[i]->nextPos_v = vertices[i + 1];
+	}
+	vertices[i]->nextPos_v = NULL;
 	for(i = 0; i < num_e; i++) {
 		edges[i] = malloc(sizeof(edge));
 	}
@@ -78,8 +91,10 @@ void readGraph(FILE *file) {
 
 void printGraph() {
 	int i;
-	for(i = 0; i < num_v; i++) {
-		printf("%d ", vertices[i]->id);
+	vertex *cur = firstPos_v;
+	while(cur != NULL) {
+		printf("%d ", cur->id);
+		cur = cur->nextPos_v;
 	}
 	printf("\n\nEdges:\n");
 	for(i = 0; i < num_e; i++) {
@@ -111,3 +126,21 @@ int maxEdgeIndexFrom(int prevMaxIndex) {
 	}
 	return -1;
 }
+
+void swapVertices(vertex *u, vertex *v) {
+/*	int tempPos = u->pos;
+	u->pos = v->pos;
+	v->pos = tempPos;
+	
+	vertex *temp_v = u->nextPos_v;
+	u->nextPos_v = v->nextPos_v;
+	v->nextPos_v = temp_v;
+	temp_v = u->prevPos_v;
+	u->prevPos_v = v->prevPos_v;
+	v->prevPos_v = temp_v;*/
+
+	int temp_id = u->id;
+	u->id = v->id;
+	v->id = temp_id;
+}	
+

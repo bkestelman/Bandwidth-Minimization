@@ -1,11 +1,15 @@
 #ifndef GRAPH_STRUCT_H
 #define GRAPH_STRUCT_H
 
-typedef struct {
+typedef struct vertex vertex;
+
+struct vertex {
+	vertex *prevPos_v;
+	vertex *nextPos_v;
 	int id;
 	int pos;
 	//may be useful to add edgelist
-} vertex;
+};
 
 typedef struct {
 	vertex *u, *v;
